@@ -1,0 +1,7 @@
+test/
+
+.gitignore
+.travis.yml
+.npmignore
+Dockerfile
+docker-compose.yml
