@@ -1,0 +1,22 @@
+{
+  "name": "dynamodb-mongodb-migrate",
+  "version": "1.0.0",
+  "description": "migrate dynamodb tables to mongodb collections",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "keywords": [
+    "dynamodb",
+    "mongodb",
+    "migration"
+  ],
+  "author": "Asanka Nissanka",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.344.0",
+    "dotenv": "^6.1.0",
+    "lodash": "^4.17.11",
+    "mongodb": "^3.1.8"
+  }
+}
