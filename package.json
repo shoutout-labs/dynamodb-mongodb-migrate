@@ -4,7 +4,7 @@
   "description": "migrate dynamodb tables to mongodb collections",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha"
   },
   "keywords": [
     "dynamodb",
