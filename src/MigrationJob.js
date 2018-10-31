@@ -18,30 +18,32 @@ class MigrationJob {
         this.mapperFunction = mapperFunction
     }
 
-    async run() {
-        try {
-            let lastEvalKey;
-            do {
-                let sourceItemResponse = await this.dynamoDBDAO.scan(null, null, null, lastEvalKey, this.dynamodbEvalLimit);
-                console.log('Received item count : ', sourceItemResponse.Count);
-                let sourceItems = sourceItemResponse && sourceItemResponse.Items ? sourceItemResponse.Items : [];
-                let targetItems = lodash.map(sourceItems, this.mapperFunction);
-                if (targetItems.length > 0) {
-                    let results = await this.mongoDBDAO.intertOrUpdateItems(targetItems);
-                    console.log('Updated mongodb doc count : ', results.upsertedCount);
-                }
-                if (sourceItemResponse && sourceItemResponse.LastEvaluatedKey) {
-                    lastEvalKey = sourceItemResponse.LastEvaluatedKey;
-                } else {
-                    lastEvalKey = null;
-                }
-            } while (lastEvalKey);
-            console.log('Migration completed');
-            process.exit(0);
-        } catch (error) {
-            console.error(error);
-            process.exit(1);
-        }
+    run() {
+        return new Promise(async (resolve,reject)=>{
+            try {
+                let lastEvalKey;
+                do {
+                    let sourceItemResponse = await this.dynamoDBDAO.scan(null, null, null, lastEvalKey, this.dynamodbEvalLimit);
+                    console.log('Received item count : ', sourceItemResponse.Count);
+                    let sourceItems = sourceItemResponse && sourceItemResponse.Items ? sourceItemResponse.Items : [];
+                    let targetItems = lodash.map(sourceItems, this.mapperFunction);
+                    if (targetItems.length > 0) {
+                        let results = await this.mongoDBDAO.intertOrUpdateItems(targetItems);
+                        console.log('Updated mongodb doc count : ', results.upsertedCount);
+                    }
+                    if (sourceItemResponse && sourceItemResponse.LastEvaluatedKey) {
+                        lastEvalKey = sourceItemResponse.LastEvaluatedKey;
+                    } else {
+                        lastEvalKey = null;
+                    }
+                } while (lastEvalKey);
+                console.log('Migration completed');
+                resolve();
+            } catch (error) {
+                console.error(error);
+                reject(error);
+            }
+        });
     }
 }
 
