@@ -1,0 +1,7 @@
+version: '3.4'
+
+services:
+   dynamodb-mongodb-migrate:
+      build: .
+      env_file:
+           - ./.env
