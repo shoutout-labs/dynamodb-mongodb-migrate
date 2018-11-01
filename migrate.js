@@ -10,18 +10,18 @@ const fs = require('fs');
 
 function loadMapperFile() {
     return new Promise((resolve, reject) => {
-        try{
+        try {
             let params = { Bucket: config.MAPPER_BUCKET_NAME, Key: config.MAPPER_OBJECT_KEY };
             let filePath = './metadata.js';
             s3.getObject(params, (error, data) => {
-                if (error){
+                if (error) {
                     reject(error);
-                }else{
+                } else {
                     fs.writeFileSync(filePath, data.Body.toString());
                     resolve();
                 }
             });
-        }catch(error){
+        } catch (error) {
             reject(error);
         }
     });
@@ -36,14 +36,19 @@ function loadMapperFile() {
         const metadata = require('./metadata');
 
         const migrationJob = new MigrationJob(config.DYNAMODB_TABLE_NAME, config.MONGODB_COLLECTION_NAME, config.MONGODB_DATABASE_NAME, 100);
-        migrationJob.setSourcefilterExpression(metadata.filterExpression,metadata.expressionAttributeNames,metadata.expressionAttributeValues);
-        migrationJob.setMapper(metadata.mapperFunction);
+        migrationJob.setSourcefilterExpression(metadata.filterExpression, metadata.expressionAttributeNames, metadata.expressionAttributeValues);
+        if (metadata.mapperFunction) {
+            migrationJob.setMapperFunction(metadata.mapperFunction);
+        }
+        if (metadata.mapperFunction) {
+            migrationJob.setFilterFunction(metadata.mapperFunction);
+        }
 
         console.log('Running migration...')
         await migrationJob.run();
         process.exit(0);
     } catch (error) {
-        console.error('Migration error',error);
+        console.error('Migration error', error);
         process.exit(1);
     }
 })();

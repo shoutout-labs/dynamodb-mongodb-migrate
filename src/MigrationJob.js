@@ -9,6 +9,7 @@ class MigrationJob {
         this.targetTableName = targetTableName;
         this.targetDbName = targetDbName;
         this.mapperFunction = (item) => { return item; };
+        this.filterFunction = () => { return true; };
         this.dynamoDBDAO = new DynamoDBDAO(sourceTableName);
         this.mongoDBDAO = new MongoDBDAO(this.targetTableName, this.targetDbName);
         this.dynamodbEvalLimit = dynamodbEvalLimit || 100;
@@ -17,8 +18,12 @@ class MigrationJob {
         this.expressionAttributeValues = null;
     }
 
-    setMapper(mapperFunction) {
+    setMapperFunction(mapperFunction) {
         this.mapperFunction = mapperFunction
+    }
+
+    setFilterFunction(filterFunction) {
+        this.filterFunction = filterFunction;
     }
 
     setSourcefilterExpression(filterExpression, expressionAttributeNames, expressionAttributeValues) {
@@ -33,10 +38,14 @@ class MigrationJob {
             try {
                 let lastEvalKey;
                 do {
-                    let sourceItemResponse = await ctx.dynamoDBDAO.scan(ctx.filterExpression,ctx.expressionAttributeNames, ctx.expressionAttributeValues, lastEvalKey, ctx.dynamodbEvalLimit);
+                    let sourceItemResponse = await ctx.dynamoDBDAO.scan(ctx.filterExpression, ctx.expressionAttributeNames, ctx.expressionAttributeValues, lastEvalKey, ctx.dynamodbEvalLimit);
                     console.log('Received item count : ', sourceItemResponse.Count);
                     let sourceItems = sourceItemResponse && sourceItemResponse.Items ? sourceItemResponse.Items : [];
-                    let targetItems = lodash.map(sourceItems, ctx.mapperFunction);
+                    let targetItems = lodash
+                        .chain(sourceItems)
+                        .filter(ctx.filterFunction)
+                        .map(ctx.mapperFunction)
+                        .value();
                     if (targetItems.length > 0) {
                         let results = await ctx.mongoDBDAO.intertOrUpdateItems(targetItems);
                         console.log('Modified mongodb doc count : ', results.modifiedCount);
