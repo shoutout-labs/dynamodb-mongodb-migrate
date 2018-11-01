@@ -5,3 +5,4 @@ test/
 .npmignore
 Dockerfile
 docker-compose.yml
+migrate.js
