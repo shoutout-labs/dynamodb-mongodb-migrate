@@ -29,9 +29,9 @@ function loadMapperFile() {
 
 (async () => {
     try {
-        console.log('loading mapper file...')
+        console.log('Loading mapper file...')
         await loadMapperFile();
-        console.log('mapper file loaded')
+        console.log('Mapper file loaded')
         const MigrationJob = require('./index');
         const mapperFunction = require('./mapper');
 
@@ -46,12 +46,11 @@ function loadMapperFile() {
         migrationJob.setSourcefilterExpression(filterExpression,expAttrNames,expAttrValues);
         migrationJob.setMapper(mapperFunction);
 
-        console.log('running migration...')
+        console.log('Running migration...')
         await migrationJob.run();
-        console.log('migration completed')
         process.exit(0);
     } catch (error) {
-        console.error('migration error',error);
+        console.error('Migration error',error);
         process.exit(1);
     }
 })();

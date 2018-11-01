@@ -39,7 +39,8 @@ class MigrationJob {
                     let targetItems = lodash.map(sourceItems, ctx.mapperFunction);
                     if (targetItems.length > 0) {
                         let results = await ctx.mongoDBDAO.intertOrUpdateItems(targetItems);
-                        console.log('Updated mongodb doc count : ', results.modifiedCount);
+                        console.log('Modified mongodb doc count : ', results.modifiedCount);
+                        console.log('Inserted mongodb doc count : ', results.upsertedCount);
                     }
                     if (sourceItemResponse && sourceItemResponse.LastEvaluatedKey) {
                         lastEvalKey = sourceItemResponse.LastEvaluatedKey;
