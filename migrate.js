@@ -12,7 +12,7 @@ function loadMapperFile() {
     return new Promise((resolve, reject) => {
         try{
             let params = { Bucket: config.MAPPER_BUCKET_NAME, Key: config.MAPPER_OBJECT_KEY };
-            let filePath = './mapper.js';
+            let filePath = './metadata.js';
             s3.getObject(params, (error, data) => {
                 if (error){
                     reject(error);
@@ -33,18 +33,11 @@ function loadMapperFile() {
         await loadMapperFile();
         console.log('Mapper file loaded')
         const MigrationJob = require('./index');
-        const mapperFunction = require('./mapper');
+        const metadata = require('./metadata');
 
         const migrationJob = new MigrationJob(config.DYNAMODB_TABLE_NAME, config.MONGODB_COLLECTION_NAME, config.MONGODB_DATABASE_NAME, 100);
-        const filterExpression = '#visible = :visible';
-        const expAttrNames = {
-            '#visible':'visible'
-        };
-        const expAttrValues = {
-            ':visible':1
-        };
-        migrationJob.setSourcefilterExpression(filterExpression,expAttrNames,expAttrValues);
-        migrationJob.setMapper(mapperFunction);
+        migrationJob.setSourcefilterExpression(metadata.filterExpression,metadata.expressionAttributeNames,metadata.expressionAttributeValues);
+        migrationJob.setMapper(metadata.mapperFunction);
 
         console.log('Running migration...')
         await migrationJob.run();
