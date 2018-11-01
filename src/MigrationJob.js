@@ -12,24 +12,34 @@ class MigrationJob {
         this.dynamoDBDAO = new DynamoDBDAO(sourceTableName);
         this.mongoDBDAO = new MongoDBDAO(this.targetTableName, this.targetDbName);
         this.dynamodbEvalLimit = dynamodbEvalLimit || 100;
+        this.filterExpression = null;
+        this.expressionAttributeNames = null;
+        this.expressionAttributeValues = null;
     }
 
     setMapper(mapperFunction) {
         this.mapperFunction = mapperFunction
     }
 
+    setSourcefilterExpression(filterExpression, expressionAttributeNames, expressionAttributeValues) {
+        this.filterExpression = filterExpression;
+        this.expressionAttributeNames = expressionAttributeNames;
+        this.expressionAttributeValues = expressionAttributeValues;
+    }
+
     run() {
-        return new Promise(async (resolve,reject)=>{
+        let ctx = this;
+        return new Promise(async (resolve, reject) => {
             try {
                 let lastEvalKey;
                 do {
-                    let sourceItemResponse = await this.dynamoDBDAO.scan(null, null, null, lastEvalKey, this.dynamodbEvalLimit);
+                    let sourceItemResponse = await ctx.dynamoDBDAO.scan(ctx.filterExpression,ctx.expressionAttributeNames, ctx.expressionAttributeValues, lastEvalKey, ctx.dynamodbEvalLimit);
                     console.log('Received item count : ', sourceItemResponse.Count);
                     let sourceItems = sourceItemResponse && sourceItemResponse.Items ? sourceItemResponse.Items : [];
-                    let targetItems = lodash.map(sourceItems, this.mapperFunction);
+                    let targetItems = lodash.map(sourceItems, ctx.mapperFunction);
                     if (targetItems.length > 0) {
-                        let results = await this.mongoDBDAO.intertOrUpdateItems(targetItems);
-                        console.log('Updated mongodb doc count : ', results.upsertedCount);
+                        let results = await ctx.mongoDBDAO.intertOrUpdateItems(targetItems);
+                        console.log('Updated mongodb doc count : ', results.modifiedCount);
                     }
                     if (sourceItemResponse && sourceItemResponse.LastEvaluatedKey) {
                         lastEvalKey = sourceItemResponse.LastEvaluatedKey;

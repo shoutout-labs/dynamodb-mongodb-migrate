@@ -36,8 +36,16 @@ function loadMapperFile() {
         const mapperFunction = require('./mapper');
 
         const migrationJob = new MigrationJob(config.DYNAMODB_TABLE_NAME, config.MONGODB_COLLECTION_NAME, config.MONGODB_DATABASE_NAME, 100);
-        
+        const filterExpression = '#visible = :visible';
+        const expAttrNames = {
+            '#visible':'visible'
+        };
+        const expAttrValues = {
+            ':visible':1
+        };
+        migrationJob.setSourcefilterExpression(filterExpression,expAttrNames,expAttrValues);
         migrationJob.setMapper(mapperFunction);
+
         console.log('running migration...')
         await migrationJob.run();
         console.log('migration completed')
