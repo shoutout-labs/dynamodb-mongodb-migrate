@@ -17,7 +17,7 @@ class MigrationJob {
         this.filterExpression = null;
         this.expressionAttributeNames = null;
         this.expressionAttributeValues = null;
-        this.dynamoDbReadThroughput = dynamoDbReadThroughput || 25;
+        this.dynamoDbReadThroughput = dynamoDbReadThroughput ? Number(dynamoDbReadThroughput) : 25;
     }
 
     setMapperFunction(mapperFunction) {
@@ -66,7 +66,7 @@ class MigrationJob {
                     console.log('Loop completion time : ', endTime - startTime, ' ms');
                     if ((endTime - startTime) < 1000 && consumedCapacity > ctx.dynamoDbReadThroughput) {
                         let waitingTime = 1000 - (endTime - startTime);
-                        console.log('Loop waiting for ',waitingTime,' ms');
+                        console.log('Loop waiting for ', waitingTime, ' ms');
                         await Utils.waitFor(waitingTime);
                     }
                     iteration++;
