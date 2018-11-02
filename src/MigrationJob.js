@@ -64,8 +64,10 @@ class MigrationJob {
                     }
                     endTime = new Date().getTime();
                     console.log('Loop completion time : ', endTime - startTime, ' ms');
-                    if (endTime - startTime < 1000 && consumedCapacity > ctx.dynamoDbReadThroughput) {
-                        await Utils.waitFor(1000 - (endTime - startTime));
+                    if ((endTime - startTime) < 1000 && consumedCapacity > ctx.dynamoDbReadThroughput) {
+                        let waitingTime = 1000 - (endTime - startTime);
+                        console.log('Loop waiting for ',waitingTime,' ms');
+                        await Utils.waitFor(waitingTime);
                     }
                     iteration++;
                 } while (lastEvalKey);
