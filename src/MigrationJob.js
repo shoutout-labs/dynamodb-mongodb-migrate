@@ -2,9 +2,10 @@
 const lodash = require('lodash');
 const DynamoDBDAO = require('./dao/DynamoDBDAO');
 const MongoDBDAO = require('./dao/MongoDBDAO');
+const Utils = require('./Utils');
 
 class MigrationJob {
-    constructor(sourceTableName, targetTableName, targetDbName, dynamodbEvalLimit) {
+    constructor(sourceTableName, targetTableName, targetDbName, dynamodbEvalLimit, dynamoDbReadThroughput) {
         this.sourceTableName = sourceTableName;
         this.targetTableName = targetTableName;
         this.targetDbName = targetDbName;
@@ -16,6 +17,7 @@ class MigrationJob {
         this.filterExpression = null;
         this.expressionAttributeNames = null;
         this.expressionAttributeValues = null;
+        this.dynamoDbReadThroughput = dynamoDbReadThroughput || 25;
     }
 
     setMapperFunction(mapperFunction) {
@@ -36,10 +38,14 @@ class MigrationJob {
         let ctx = this;
         return new Promise(async (resolve, reject) => {
             try {
-                let lastEvalKey;
+                let lastEvalKey, startTime, endTime, totalItemCount = 0, iteration = 1;
                 do {
+                    startTime = new Date().getTime();
                     let sourceItemResponse = await ctx.dynamoDBDAO.scan(ctx.filterExpression, ctx.expressionAttributeNames, ctx.expressionAttributeValues, lastEvalKey, ctx.dynamodbEvalLimit);
-                    console.log('Received item count : ', sourceItemResponse.Count);
+                    totalItemCount += sourceItemResponse.Count;
+                    let consumedCapacity = sourceItemResponse.ConsumedCapacity.CapacityUnits;
+                    console.log('Consumed capacity ', consumedCapacity);
+                    console.log('Received ', sourceItemResponse.Count, ' items at iteration ', iteration, ' and total of ', totalItemCount, ' items received');
                     let sourceItems = sourceItemResponse && sourceItemResponse.Items ? sourceItemResponse.Items : [];
                     let targetItems = lodash
                         .chain(sourceItems)
@@ -56,6 +62,12 @@ class MigrationJob {
                     } else {
                         lastEvalKey = null;
                     }
+                    endTime = new Date().getTime();
+                    console.log('Loop completion time : ', endTime - startTime, ' ms');
+                    if (endTime - startTime < 1000 && consumedCapacity > ctx.dynamoDbReadThroughput) {
+                        await Utils.waitFor(1000 - (endTime - startTime));
+                    }
+                    iteration++;
                 } while (lastEvalKey);
                 console.log('Migration completed');
                 resolve();

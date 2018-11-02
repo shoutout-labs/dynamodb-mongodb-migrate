@@ -69,6 +69,7 @@ class DynamoDBDAO {
                 if(lastEvalKey){
                     params.ExclusiveStartKey = lastEvalKey;
                 }
+                params.ReturnConsumedCapacity = 'TOTAL';
                 ctx.docClient.scan(params, function (error, response) {
                     if (error) {
                         console.error(error);
