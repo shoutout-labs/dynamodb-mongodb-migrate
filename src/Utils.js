@@ -2,7 +2,7 @@
 
 class Utils{
     static waitFor(milliseconds){
-        return Promise((resolve,reject)=>{
+        return new Promise((resolve,reject)=>{
             setTimeout(()=>{
                 resolve();
             },milliseconds);
