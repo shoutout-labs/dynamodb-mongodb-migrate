@@ -1,8 +1,9 @@
 'use strict';
 const lodash = require('lodash');
+const RateLimiter = require('limiter').RateLimiter;
 const DynamoDBDAO = require('./dao/DynamoDBDAO');
 const MongoDBDAO = require('./dao/MongoDBDAO');
-const Utils = require('./Utils');
+
 
 class MigrationJob {
     constructor(sourceTableName, targetTableName, targetDbName, dynamodbEvalLimit, dynamoDbReadThroughput) {
@@ -18,6 +19,14 @@ class MigrationJob {
         this.expressionAttributeNames = null;
         this.expressionAttributeValues = null;
         this.dynamoDbReadThroughput = dynamoDbReadThroughput ? Number(dynamoDbReadThroughput) : 25;
+        this.limiter = new RateLimiter(this.dynamoDbReadThroughput, 1000);
+        this._removeTokens = (tokenCount) => {
+            return new Promise((resolve, reject) => {
+                this.limiter.removeTokens(tokenCount, () => {
+                    resolve();
+                });
+            });
+        }
     }
 
     setMapperFunction(mapperFunction) {
@@ -38,14 +47,19 @@ class MigrationJob {
         let ctx = this;
         return new Promise(async (resolve, reject) => {
             try {
-                let lastEvalKey, startTime, endTime, totalItemCount = 0, iteration = 1;
+                let lastEvalKey, startTime, endTime, totalItemCount = 0, iteration = 1, permitsToConsume = 1;
                 do {
                     startTime = new Date().getTime();
+                    await ctx._removeTokens(permitsToConsume);
                     let sourceItemResponse = await ctx.dynamoDBDAO.scan(ctx.filterExpression, ctx.expressionAttributeNames, ctx.expressionAttributeValues, lastEvalKey, ctx.dynamodbEvalLimit);
                     totalItemCount += sourceItemResponse.Count;
                     let consumedCapacity = sourceItemResponse.ConsumedCapacity.CapacityUnits;
                     console.log('Consumed capacity ', consumedCapacity);
                     console.log('Received ', sourceItemResponse.Count, ' items at iteration ', iteration, ' and total of ', totalItemCount, ' items received');
+                    permitsToConsume = Math.round(consumedCapacity - 1);
+                    if (permitsToConsume < 1) {
+                        permitsToConsume = 1;
+                    }
                     let sourceItems = sourceItemResponse && sourceItemResponse.Items ? sourceItemResponse.Items : [];
                     let targetItems = lodash
                         .chain(sourceItems)
@@ -64,11 +78,6 @@ class MigrationJob {
                     }
                     endTime = new Date().getTime();
                     console.log('Loop completion time : ', endTime - startTime, ' ms');
-                    if ((endTime - startTime) < 1000 && consumedCapacity > ctx.dynamoDbReadThroughput) {
-                        let waitingTime = 1000 - (endTime - startTime);
-                        console.log('Loop waiting for ', waitingTime, ' ms');
-                        await Utils.waitFor(waitingTime);
-                    }
                     iteration++;
                 } while (lastEvalKey);
                 console.log('Migration completed');
