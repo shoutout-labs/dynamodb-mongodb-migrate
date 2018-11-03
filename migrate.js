@@ -37,8 +37,8 @@ function loadMapperFile() {
 
         const migrationJob = new MigrationJob(config.DYNAMODB_TABLE_NAME, config.MONGODB_COLLECTION_NAME, config.MONGODB_DATABASE_NAME, 100, config.DYNAMODB_READ_THROUGHPUT);
         migrationJob.setSourcefilterExpression(metadata.filterExpression, metadata.expressionAttributeNames, metadata.expressionAttributeValues);
-        if (metadata.mapperFunction) {
-            migrationJob.setMapperFunction(metadata.mapperFunction);
+        if (metadata.filterFunction) {
+            migrationJob.setMapperFunction(metadata.filterFunction);
         }
         if (metadata.mapperFunction) {
             migrationJob.setFilterFunction(metadata.mapperFunction);
