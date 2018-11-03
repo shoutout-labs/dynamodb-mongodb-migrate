@@ -29,7 +29,7 @@ const MigrationJob = require('dynamodb-mongodb-migrate');
 const migrationJob = new MigrationJob('DYNAMODB_TABLE_NAME', 'MONGODB_COLLECTION_NAME', 'MONGODB_DATABASE_NAME', DYNAMODB_SCAN_LIMIT, DYNAMODB_READ_THROUGHPUT);
 ```
 
-### Setting dynamodb filter expression - filter when scanning dynamodb
+### Set dynamodb filter expression - filter when scanning dynamodb
 
 ```javascript
 const filterExpression = '#attr1 = :val1';
@@ -42,7 +42,7 @@ const expressionAttributeValues = {
 migrationJob.setSourcefilterExpression(filterExpression, expressionAttributeNames, expressionAttributeValues);
 ```
 
-### Setting data filter function - filter after scan result - similar to lodash filter
+### Set data filter function - filter after scan result - similar to lodash filter
 
 ```javascript
 const filterFunction = (item) =>{
@@ -52,7 +52,7 @@ const filterFunction = (item) =>{
 migrationJob.setMapperFunction(filterFunction);
 ```
 
-### Setting data mapper function - similar to lodash map
+### Set data mapper function - similar to lodash map
 
 ```javascript
 const mapperFunction = (item) =>{
