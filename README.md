@@ -21,6 +21,8 @@ migrationJob.run()
 
 ## Adavance Usage
 
+### Initialize
+
 ```javascript
 const MigrationJob = require('dynamodb-mongodb-migrate');
 
@@ -61,7 +63,11 @@ const mapperFunction = (item) =>{
 }
 
 migrationJob.setMapperFunction(mapperFunction);
+```
 
+### Run
+
+```javascript
 migrationJob.run()
 ```
 
