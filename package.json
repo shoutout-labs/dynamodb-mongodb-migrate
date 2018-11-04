@@ -1,6 +1,7 @@
 {
   "name": "dynamodb-mongodb-migrate",
-  "version": "1.0.0",
+  "version": "0.9.1",
+  "repository": "https://github.com/shoutout-labs/dynamodb-mongodb-migrate.git",
   "description": "migrate dynamodb tables to mongodb collections",
   "main": "index.js",
   "scripts": {
@@ -12,7 +13,7 @@
     "migration"
   ],
   "author": "Asanka Nissanka",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "aws-sdk": "^2.344.0",
     "dotenv": "^6.1.0",
