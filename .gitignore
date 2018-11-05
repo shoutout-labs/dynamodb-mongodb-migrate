@@ -61,3 +61,6 @@ typings/
 .next
 *.env
 metadata.js
+
+# ingore mapper files
+*-mapper.js
