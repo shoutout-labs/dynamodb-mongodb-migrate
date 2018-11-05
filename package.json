@@ -5,7 +5,8 @@
   "description": "migrate dynamodb tables to mongodb collections",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "docker-hub-publish":"./docker-hub-publish.sh"
   },
   "keywords": [
     "dynamodb",
