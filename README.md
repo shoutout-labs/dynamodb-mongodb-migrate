@@ -49,7 +49,7 @@ const filterFunction = (item) =>{
     return item.attr1 !== null;
 }
 
-migrationJob.setMapperFunction(filterFunction);
+migrationJob.setFilterFunction(metadata.filterFunction);
 ```
 
 ### Set data mapper function - similar to lodash map
