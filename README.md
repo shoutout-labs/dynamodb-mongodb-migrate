@@ -1,4 +1,6 @@
 # DynamoDB MongoDB Migrate
+
+[![npm version](https://badge.fury.io/js/dynamodb-mongodb-migrate.svg)](https://badge.fury.io/js/dynamodb-mongodb-migrate)
 [![Build Status](https://travis-ci.org/shoutout-labs/dynamodb-mongodb-migrate.svg?branch=master)](https://travis-ci.org/shoutout-labs/dynamodb-mongodb-migrate)
 
 Data migration module for migrating dynamodb tables to mongodb db collections
