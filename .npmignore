@@ -7,3 +7,7 @@ Dockerfile
 docker-compose.yml
 migrate.js
 docker-hub-publish.sh
+.env
+*.env
+metadata.js
+*-mapper.js
