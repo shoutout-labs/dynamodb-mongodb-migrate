@@ -2,9 +2,9 @@
 const DynamoDBConnector = require('../connectors/DynamoDBConnector');
 
 class DynamoDBDAO {
-    constructor(tableName) {
+    constructor(tableName,region,accessKeyId,secretAccessKey) {
         this.tableName = tableName;
-        this.docClient = DynamoDBConnector.getDocumentClient();
+        this.docClient = DynamoDBConnector.getDocumentClient(region,accessKeyId,secretAccessKey);
     }
 
     query(keyConditionExpression, filterExp, expAttrNames, expAttrValues, indexName, projExp) {

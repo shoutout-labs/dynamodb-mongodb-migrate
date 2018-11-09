@@ -6,14 +6,14 @@ const MongoDBDAO = require('./dao/MongoDBDAO');
 
 
 class MigrationJob {
-    constructor(sourceTableName, targetTableName, targetDbName, dynamodbEvalLimit, dynamoDbReadThroughput) {
+    constructor(sourceTableName, targetTableName, targetDbName,sourceConnectionOptions, targetConnectionOptions, dynamodbEvalLimit, dynamoDbReadThroughput) {
         this.sourceTableName = sourceTableName;
         this.targetTableName = targetTableName;
         this.targetDbName = targetDbName;
         this.mapperFunction = (item) => { return item; };
         this.filterFunction = () => { return true; };
-        this.dynamoDBDAO = new DynamoDBDAO(sourceTableName);
-        this.mongoDBDAO = new MongoDBDAO(this.targetTableName, this.targetDbName);
+        this.dynamoDBDAO = new DynamoDBDAO(sourceTableName,sourceConnectionOptions.region,sourceConnectionOptions.accessKeyId,sourceConnectionOptions.secretAccessKey);
+        this.mongoDBDAO = new MongoDBDAO(this.targetTableName, this.targetDbName,targetConnectionOptions.host, targetConnectionOptions.user, targetConnectionOptions.password);
         this.dynamodbEvalLimit = dynamodbEvalLimit || 100;
         this.filterExpression = null;
         this.expressionAttributeNames = null;

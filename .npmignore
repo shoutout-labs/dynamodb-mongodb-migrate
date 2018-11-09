@@ -11,3 +11,4 @@ docker-hub-publish.sh
 *.env
 metadata.js
 *-mapper.js
+config.js

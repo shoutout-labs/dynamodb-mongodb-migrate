@@ -4,20 +4,19 @@
 'use strict';
 
 const MongoClient = require('mongodb').MongoClient;
-const config = require('./../config');
-const URL = 'mongodb://' + config.MONGODB_USERNAME + ':' + config.MONGODB_PASSWORD + '@' + config.MONGODB_ENDPOINT;
 
 let client;
 
 class MongoDBConnector {
 
-    static getConnection(database) {
+    static getConnection(database,host,user,password) {
         return new Promise(async (resolve, reject) => {
             try {
                 if (client) {
                     resolve(client.db(database));
                 } else {
-                    client = new MongoClient(URL,{ useNewUrlParser: true });
+                    let url = 'mongodb://' + user + ':' + password + '@' + host;
+                    client = new MongoClient(url,{ useNewUrlParser: true });
                     await client.connect();
                     resolve(client.db(database));
                 }

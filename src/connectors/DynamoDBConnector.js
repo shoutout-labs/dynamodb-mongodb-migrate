@@ -4,12 +4,13 @@
 'use strict';
 
 const AWS = require('aws-sdk')
-const config = require('./../config');
 
 class DynamoDBConnector {
-    static getDocumentClient() {
+    static getDocumentClient(region,accessKeyId,secretAccessKey) {
         return new AWS.DynamoDB.DocumentClient({
-            region: config.AWS_REGION
+            region: region,
+            accessKeyId:accessKeyId,
+            secretAccessKey:secretAccessKey
         });
     }
 }
