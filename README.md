@@ -13,10 +13,21 @@ npm install dynamodb-mongodb-migrate
 
 ## Quick Usage
 
-```shell
+```javascript
 const MigrationJob = require('dynamodb-mongodb-migrate');
 
-const migrationJob = new MigrationJob('DYNAMODB_TABLE_NAME', 'MONGODB_COLLECTION_NAME', 'MONGODB_DATABASE_NAME', DYNAMODB_SCAN_LIMIT, DYNAMODB_READ_THROUGHPUT);
+let sourceConnectionOptions = {
+    region: <AWS_REGION>,
+    accessKeyId: <AWS_ACCESS_KEY_ID>,
+    secretAccessKey: <AWS_SECRET_ACCESS_KEY>
+};
+let targetConnectionOptions = {
+    host: <MONGODB_ENDPOINT>,
+    user: <MONGODB_USERNAME>,
+    password: <MONGODB_PASSWORD>
+};
+
+const migrationJob = new MigrationJob('DYNAMODB_TABLE_NAME', 'MONGODB_COLLECTION_NAME', 'MONGODB_DATABASE_NAME', sourceConnectionOptions, targetConnectionOptions, DYNAMODB_SCAN_LIMIT, DYNAMODB_READ_THROUGHPUT);
 
 migrationJob.run()
 ```
@@ -28,7 +39,18 @@ migrationJob.run()
 ```javascript
 const MigrationJob = require('dynamodb-mongodb-migrate');
 
-const migrationJob = new MigrationJob('DYNAMODB_TABLE_NAME', 'MONGODB_COLLECTION_NAME', 'MONGODB_DATABASE_NAME', DYNAMODB_SCAN_LIMIT, DYNAMODB_READ_THROUGHPUT);
+let sourceConnectionOptions = {
+    region: <AWS_REGION>,
+    accessKeyId: <AWS_ACCESS_KEY_ID>,
+    secretAccessKey: <AWS_SECRET_ACCESS_KEY>
+};
+let targetConnectionOptions = {
+    host: <MONGODB_ENDPOINT>,
+    user: <MONGODB_USERNAME>,
+    password: <MONGODB_PASSWORD>
+};
+
+const migrationJob = new MigrationJob('DYNAMODB_TABLE_NAME', 'MONGODB_COLLECTION_NAME', 'MONGODB_DATABASE_NAME', sourceConnectionOptions, targetConnectionOptions, DYNAMODB_SCAN_LIMIT, DYNAMODB_READ_THROUGHPUT);
 ```
 
 ### Set dynamodb filter expression - filter when scanning dynamodb
