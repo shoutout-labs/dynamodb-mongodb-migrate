@@ -1,12 +1,12 @@
 {
   "name": "dynamodb-mongodb-migrate",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "repository": "https://github.com/shoutout-labs/dynamodb-mongodb-migrate.git",
   "description": "migrate dynamodb tables to mongodb collections",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "docker-hub-publish":"./docker-hub-publish.sh"
+    "docker-hub-publish": "./docker-hub-publish.sh"
   },
   "keywords": [
     "dynamodb",
