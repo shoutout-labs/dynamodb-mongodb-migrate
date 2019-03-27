@@ -9,16 +9,15 @@ let client;
 
 class MongoDBConnector {
 
-    static getConnection(database,host,user,password) {
+    static getConnection(databaseName, connectionString) {
         return new Promise(async (resolve, reject) => {
             try {
                 if (client) {
-                    resolve(client.db(database));
+                    resolve(client.db(databaseName));
                 } else {
-                    let url = 'mongodb://' + user + ':' + password + '@' + host;
-                    client = new MongoClient(url,{ useNewUrlParser: true });
+                    client = new MongoClient(connectionString);
                     await client.connect();
-                    resolve(client.db(database));
+                    resolve(client.db(databaseName));
                 }
             } catch (error) {
                 console.error(error);
