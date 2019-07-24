@@ -4,6 +4,7 @@ module.exports = {
     MONGODB_USERNAME: process.env.MONGODB_USERNAME,
     MONGODB_PASSWORD: process.env.MONGODB_PASSWORD,
     MONGODB_ENDPOINT: process.env.MONGODB_ENDPOINT,
+    MONGODB_URL: process.env.MONGODB_URL,
     AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
     AWS_REGION: process.env.AWS_REGION,
