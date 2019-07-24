@@ -9,14 +9,20 @@ let client;
 
 class MongoDBConnector {
 
-    static getConnection(database,host,user,password) {
+    static getConnection(database, targetConnectionOptions) {
         return new Promise(async (resolve, reject) => {
             try {
                 if (client) {
                     resolve(client.db(database));
                 } else {
-                    let url = 'mongodb://' + user + ':' + password + '@' + host;
-                    client = new MongoClient(url,{ useNewUrlParser: true });
+                    let url = "";
+                    // Adds the option to pass the URL as a whole
+                    if (targetConnectionOptions.url)
+                        url = targetConnectionOptions.url;
+                    else {
+                        url = 'mongodb://' + targetConnectionOptions.user + ':' + targetConnectionOptions.password + '@' + targetConnectionOptions.host;
+                    }
+                    client = new MongoClient(url, { useNewUrlParser: true });
                     await client.connect();
                     resolve(client.db(database));
                 }
